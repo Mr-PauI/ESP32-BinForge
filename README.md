@@ -48,4 +48,4 @@ The tool is designed for workflows where post-build customization is needed with
 
 ## License
 
-MIT License — see `LICENSE` for details.
+MIT License — see [`LICENSE`](https://github.com/Mr-PauI/ESP32-BinForge/blob/main/LICENSE) for details.
