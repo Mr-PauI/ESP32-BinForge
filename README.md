@@ -49,3 +49,5 @@ The tool is designed for workflows where post-build customization is needed with
 ## License
 
 MIT License — see [`LICENSE`](https://github.com/Mr-PauI/ESP32-BinForge/blob/main/LICENSE) for details.
+
+This project includes esp_app_format.h from Espressif Systems, licensed under Apache 2.0.
