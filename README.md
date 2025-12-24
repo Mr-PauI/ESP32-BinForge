@@ -38,10 +38,36 @@ Until user data is injected, the contents of this region should be considered un
 
 ## Use Cases
 
-- Post-compilation firmware customization  
-- Asset or data blob injection into ESP32 binaries  
-- Repairing CRCs after manual or automated binary edits  
-- Development and tooling workflows for ESP32 firmware experimentation
+- **Post-compilation firmware customization**  
+  Modify firmware images after build without recompiling or relinking.
+
+- **Asset or data blob injection into ESP32 binaries**  
+  Embed ROM-resident assets such as logos, tables, lookup data, or game images.
+
+- **Repairing CRCs after manual or automated binary edits**  
+  Revalidate modified firmware images so they remain flashable.
+
+- **Closed-source or restricted-source firmware workflows**  
+  Customize or parameterize firmware images when source code is unavailable or rebuilding is impractical.
+
+- **Manufacturing and deployment variants**  
+  Generate multiple firmware variants (branding, configuration, region data) from a single base image.
+
+- **Late-stage firmware changes**  
+  Apply changes after code freeze, certification, or build system lock-down.
+
+- **ROM-backed data for resource-constrained systems**  
+  Store large static data in flash/ROM instead of consuming RAM.
+
+- **Firmware experimentation and reverse-engineering workflows**  
+  Safely modify binaries for testing, research, or exploratory development.
+
+- **Emulator and retro firmware use cases**  
+  Embed ROM images or game data directly into firmware for standalone emulation targets.
+
+- **Tooling and automation pipelines**  
+  Integrate into scripts or CI systems for repeatable post-build firmware modification.
+
 
 ---
 
