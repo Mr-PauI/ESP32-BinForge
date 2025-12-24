@@ -1,4 +1,5 @@
-# ESP32-BinForge
+<img width="384" height="256" alt="image" src="https://github.com/user-attachments/assets/4a296cc2-7a35-4008-8cd0-3868c8d103b2" />
+
 
 **ESP32-BinForge** is a small utility for modifying and revalidating ESP32 firmware .bin files. It supports injecting custom data into firmware images and regenerating CRCs, allowing binaries to remain flashable after modification.
 
