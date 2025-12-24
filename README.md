@@ -7,7 +7,7 @@ The tool is designed for workflows where post-build customization is needed with
 
 The tool provides a reserved embedded region. The interpretation and use of that region is entirely user-defined.
 
-Data regions are defined by a randomly generated magic byte sequence. This sequence is intentionally non‑compressible and prevents toolchain or linker optimizations from collapsing or deduplicating the region during compilation.
+Data regions are defined by a randomly generated [magic byte](https://github.com/Mr-PauI/ESP32-BinForge/blob/main/blobs/blob_32b.h) sequence. This sequence is intentionally non‑compressible and prevents toolchain or linker optimizations from collapsing or deduplicating the region during compilation.
 
 Until user data is injected, the contents of this region should be considered undefined.
 
@@ -84,7 +84,7 @@ Until user data is injected, the contents of this region should be considered un
 ## Design Constraints
 
 - BinForge operates on a single reserved data blob per firmware image.
-- The blob is identified by a fixed 32-byte magic pattern. The minimum blob size is 32 bytes for this reason.
+- The blob is identified by a fixed 32-byte [magic pattern](https://github.com/Mr-PauI/ESP32-BinForge/blob/main/blobs/blob_32b.h). The minimum blob size is 32 bytes for this reason.
 - Injection is performed in-place; firmware layout and segment sizes are not modified.
 - The tool does not interpret blob contents — all semantics are defined by user code.
 - Blob integrity is validated using a CRC32 generated at blob creation time.
