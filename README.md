@@ -81,7 +81,14 @@ Until user data is injected, the contents of this region should be considered un
 - Intended for use with ESP32, ESP32-S2, ESP32-S3, ESP32-C3, ESP32-C6 and ESP32-P4
   (Compatibility with earlier Espressif MCUs has not yet been verified)
 
----
+## Design Constraints
+
+- BinForge operates on a single reserved data blob per firmware image.
+- The blob is identified by a fixed 32-byte magic pattern. The minimum blob size is 32 bytes for this reason.
+- Injection is performed in-place; firmware layout and segment sizes are not modified.
+- The tool does not interpret blob contents — all semantics are defined by user code.
+- Blob integrity is validated using a CRC32 generated at blob creation time.
+- It is the user’s responsibility to ensure injected data fits within the reserved region.
 
 ## License
 
