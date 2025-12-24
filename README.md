@@ -89,6 +89,9 @@ Until user data is injected, the contents of this region should be considered un
 - The tool does not interpret blob contents — all semantics are defined by user code.
 - Blob integrity is validated using a CRC32 generated at blob creation time.
 - It is the user’s responsibility to ensure injected data fits within the reserved region.
+- BinForge operates on unencrypted ESP32 firmware images.
+- It is not a DRM or secure licensing solution.
+- Encrypted firmware is out of scope for v0.x
 
 ## License
 
