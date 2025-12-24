@@ -75,7 +75,7 @@ Until user data is injected, the contents of this region should be considered un
 ## Scope and Compatibility
 
 - Based on ESP32 firmware image specifications  
-- Intended for ESP32-class devices  
+- Intended for ESP32, ESP32-S2, ESP32-S3, ESP32-C3, and ESP32-C6 series MCUs
   (Compatibility with earlier Espressif MCUs has not yet been verified)
 
 ---
