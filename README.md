@@ -65,6 +65,9 @@ Until user data is injected, the contents of this region should be considered un
 - **Emulator and retro firmware use cases**  
   Embed ROM images or game data directly into firmware for standalone emulation targets.
 
+- **Licensing, provisioning, and device personalization**  
+  Inject per-device keys, license numbers, API tokens, or other metadata without rebuilding the firmware. CRC checks allow firmware to detect whether injected data remains in its default state.
+
 - **Tooling and automation pipelines** *(planned CLI tool)*  
   Integrate into scripts or CI systems for repeatable post-build firmware modification.
 
