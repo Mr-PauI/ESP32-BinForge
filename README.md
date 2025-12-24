@@ -65,8 +65,9 @@ Until user data is injected, the contents of this region should be considered un
 - **Emulator and retro firmware use cases**  
   Embed ROM images or game data directly into firmware for standalone emulation targets.
 
-- **Tooling and automation pipelines**  
+- **Tooling and automation pipelines** *(planned CLI tool)*  
   Integrate into scripts or CI systems for repeatable post-build firmware modification.
+
 
 
 ---
