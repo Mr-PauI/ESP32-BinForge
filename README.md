@@ -1,8 +1,14 @@
 # ESP32-BinForge
 
-**ESP32-BinForge** is a small utility for modifying and revalidating ESP32 firmware `.bin` files. It supports injecting custom data into firmware images while automatically updating the CRC to keep binaries flashable after modification.
+**ESP32-BinForge** is a small utility for modifying and revalidating ESP32 firmware .bin files. It supports injecting custom data into firmware images and regenerating CRCs, allowing binaries to remain flashable after intentional or accidental modification.
 
 The tool is designed for workflows where post-build customization is needed without recompiling firmware, such as embedding assets, configuration blobs, or replacing placeholder data.
+
+The tool provides a reserved embedded region. The interpretation and use of that region is entirely user-defined.
+
+Data regions are defined by a randomly generated magic byte sequence. This sequence is intentionally non‑compressible and prevents toolchain or linker optimizations from collapsing or deduplicating the region during compilation.
+
+Until user data is injected, the contents of this region should be considered undefined.
 
 ---
 
@@ -48,6 +54,6 @@ The tool is designed for workflows where post-build customization is needed with
 
 ## License
 
-MIT License — see [`LICENSE`](https://github.com/Mr-PauI/ESP32-BinForge/blob/main/LICENSE) for details.
+MIT License — see [`LICENSE`](https://github.com/Mr-PauI/ESP32-BinForge/blob/main/LICENSE) for details. 
 
 This project includes esp_app_format.h from Espressif Systems, licensed under Apache 2.0.
