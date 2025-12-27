@@ -9,7 +9,8 @@ The tool provides a reserved embedded region. The interpretation and use of that
 
 Data regions are defined by a randomly generated [magic byte](https://github.com/Mr-PauI/ESP32-BinForge/blob/main/blobs/blob_32b.h) sequence. This sequence is intentionally non‑compressible and prevents toolchain or linker optimizations from collapsing or deduplicating the region during compilation.
 
-Until user data is injected, the contents of this region should be considered undefined.
+Until user data is injected, the contents of this region should be considered undefined.  
+  
 ---
 Below is a screen shot from 3 concurrent terminal sessions for the same firmware. The left most image represents the included demo firmware
 as compiled and flashed without modification. The next two terminal windows show the results after the compiled .bin file was processed with BinForge  
