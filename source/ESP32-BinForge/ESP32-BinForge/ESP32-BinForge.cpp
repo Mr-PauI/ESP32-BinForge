@@ -29,6 +29,8 @@
 #include <fstream>
 #include <vector>
 #include <cstdint>
+#include <sstream>
+#include <iomanip>
 
 #define MAX_LOADSTRING 100
 
@@ -37,6 +39,7 @@
 HINSTANCE hInst;                                // current instance
 WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
+HWND hEditLog = nullptr;                        // the full-screen textbox
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -45,10 +48,32 @@ LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 void MergeROM(HWND);
 uint8_t compute_esp32s3_crc(uint8_t* data, int count);
-uint8_t xor_sum_of_sections(const std::string& file_path);
 void validate_esp32_bin(const std::string filename);
 void revalidate_crc_nosha256(HWND hWnd);
+void analyze_file(HWND hWnd);
+void analyze_bin(const std::string filename);
 using namespace std;
+
+void AppendLog(HWND hEdit, const std::string& text)
+{
+    int len = GetWindowTextLengthA(hEdit);
+    SendMessageA(hEdit, EM_SETSEL, len, len);
+    SendMessageA(hEdit, EM_REPLACESEL, FALSE, (LPARAM)text.c_str());
+}
+
+void AppendLog_HEX(HWND hEditLog, uint32_t value)
+{
+    std::stringstream ss;
+    ss << std::hex << std::uppercase << std::setw(8) << std::setfill('0') << value;
+        
+
+    AppendLog(hEditLog, ss.str());
+}
+
+void ClearLog(HWND hEditLog)
+{
+    SetWindowText(hEditLog, L"");
+}
 
 // Function to show the open file dialog and return the selected file name
 std::string ShowOpenFileDialogBIN(HWND hwnd) {
@@ -188,10 +213,10 @@ void MergeROM(HWND hWnd)
         return;
     }
 
-    //check if any of the required filenames was not provided
-    if (inputROM.empty()||(inputBIN.empty())||(outputBIN.empty()))
-        return;
-
+    AppendLog(hEditLog, "-----------------------------------\r\n");
+    AppendLog(hEditLog, "  Injecting data into esp32 binary  \r\n");
+    AppendLog(hEditLog, "-----------------------------------\r\n");
+    AppendLog(hEditLog, "  Locating magic pattern....");
     ofstream output_bin(outputBIN, ios::out | ios::binary);
     ifstream input_bin(inputBIN, ios::in | ios::binary);
     int pattern_location = 0;
@@ -219,21 +244,27 @@ void MergeROM(HWND hWnd)
 
         }
     }
-    input_bin.close();
+    input_bin.close();    
     // Ensure we found the pattern
     if (numBytesMatched < 32)
     {
-        MessageBoxW(
-            hWnd,
+        AppendLog(hEditLog, "  failed!\r\n\r\n");
+        AppendLog(hEditLog, "  Operation could not be completed!\r\n");
+        AppendLog(hEditLog, "  Reserved segment could not be found\r\n");
+        AppendLog(hEditLog, "  Ensure you are using the correct input file\r\n");
+        
+        /*MessageBoxW(hWnd,
             L"Operation could not be completed\n\n"
             L"Reserved segment could not be found\n"
             L"Ensure you are using the correct input file\n",
             L"",
             MB_OK | MB_ICONWARNING
-        );
+        );*/
         return;
     }
+    AppendLog(hEditLog, "  complete!\r\n");
     // Perform the merge operation
+    AppendLog(hEditLog, "  Merging data with binary....");
     // Copy bytes up to the pattern position to the output bin
     input_bin.open(inputBIN, ios::in | ios::binary);
     for (int i = 0; i < pattern_location; i++)
@@ -264,47 +295,13 @@ void MergeROM(HWND hWnd)
     input_rom.close();
     output_bin.close();
     input_bin.close();
-
+    AppendLog(hEditLog, "  complete!\r\n");
     // Regenerate CRC and disable the Sha256 checksum
     validate_esp32_bin(outputBIN);
-    MessageBox(hWnd, L"Merge ROM Complete!", L"Success!", MB_ICONEXCLAMATION | MB_OK);
+    AppendLog(hEditLog, "-----------------------------\r\n");
+    AppendLog(hEditLog, "  Merging binary complete! \r\n");
+    //MessageBox(hWnd, L"Merge binary Complete!", L"Success!", MB_ICONEXCLAMATION | MB_OK);
     return;
-    // Step1: Read the entire outBin into memory
-    //input_bin.open(inputBIN, ios::in | ios::binary);
-    input_bin.open(outputBIN, ios::in | ios::binary);
-    uint8_t* bin_data;
-    bin_data = (uint8_t*)malloc(filesize);
-    input_bin.read((char*)bin_data, filesize);    
-    input_bin.close();
-    // Step2: Compute the CRC value's for each segment
-    uint8_t file_position = 24; // position us at the beginning of the first segment
-    uint8_t segment_count = bin_data[1]; // 2nd byte contains number of segments
-    uint32_t segment_size = 0;
-    uint8_t crc_value=0xef;
-    for (int j = 0; j < segment_count; j++)
-    {
-        segment_size = (uint32_t)bin_data[file_position+4];
-        file_position += 8; // skip over segment header
-        for (int i = 0; i < segment_size; i++)
-        {
-            crc_value ^= bin_data[file_position];
-            file_position++;
-        }
-    }
-    crc_value= xor_sum_of_sections(outputBIN);
-   // crc_value ^= 0xef;
-    //crc_value ^= 0x0d;
-    //for (int i = 24 + 8; i < filesize - 33; i++)
-    //    crc_value ^= bin_data[i];
-    // Step3: Update the CRC value
-    bin_data[filesize - 33] = crc_value;
-    // Step4: Change checksum to simple CRC mode
-    bin_data[23] = 0;
-    // Step5: Write output binary
-    output_bin.open(outputBIN, ios::out | ios::binary);
-    output_bin.write((char*)bin_data, filesize);
-    output_bin.close();
-    free(bin_data);
 }
 
 uint8_t compute_esp32s3_crc(uint8_t *data,int count)
@@ -404,7 +401,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
        WS_OVERLAPPEDWINDOW,
        CW_USEDEFAULT, 0,
        // CW_USEDEFAULT, 0, // default window size
-       500, 200,
+       600, 800,
        nullptr,
        hMenu,        
        hInstance,
@@ -436,12 +433,52 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
+    case WM_SIZE:
+    {
+        if (hEditLog)
+        {
+            MoveWindow(
+                hEditLog,
+                0, 0,
+                LOWORD(lParam),
+                HIWORD(lParam),
+                TRUE
+            );
+        }
+    }
+    break;
+    case WM_CREATE:
+    {
+        hEditLog = CreateWindowExW(
+            WS_EX_CLIENTEDGE,
+            L"EDIT",
+            L"",
+            WS_CHILD | WS_VISIBLE |
+            WS_VSCROLL | WS_HSCROLL |
+            ES_LEFT | ES_MULTILINE |
+            ES_AUTOVSCROLL | ES_AUTOHSCROLL |
+            ES_READONLY,
+            0, 0, 0, 0,
+            hWnd,
+            nullptr,
+            hInst,
+            nullptr
+        );
+
+        // Optional: fixed-width font (recommended)
+        HFONT hFont = (HFONT)GetStockObject(ANSI_FIXED_FONT);
+        SendMessage(hEditLog, WM_SETFONT, (WPARAM)hFont, TRUE);
+    }
+    break;
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
             // Parse the menu selections:
             switch (wmId)
             {
+            case IDM_FILE_EXAMINE:
+                analyze_file(hWnd);
+                break;
             case IDM_FILE_REVALIDATE:
                 revalidate_crc_nosha256(hWnd);
                 break;
@@ -498,61 +535,42 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     return (INT_PTR)FALSE;
 }
 
-
-uint8_t xor_sum_of_sections(const std::string& file_path) {
-    std::ifstream file(file_path, std::ios::binary);
-    if (!file) {
-        std::cerr << "Error opening file: " << file_path << std::endl;
-        return 0;
+void analyze_file(HWND hWnd)
+{
+    ClearLog(hEditLog);
+    string inputBIN = "";
+    inputBIN = ShowOpenFileDialogBIN(hWnd);
+    if (inputBIN != "")
+    {
+        analyze_bin(inputBIN);
     }
-
-    // Read number of sections from the second byte
-    file.seekg(1, std::ios::beg);
-    uint8_t num_sections;
-    file.read(reinterpret_cast<char*>(&num_sections), sizeof(num_sections));
-    std::cout << "Number of sections: " << static_cast<int>(num_sections) << std::endl;
-
-    // Initial offset to start reading sections
-    std::streamoff offset = 24;
-    uint32_t xor_sum = 0xEF;
-
-    for (uint8_t i = 0; i < num_sections; ++i) {
-        file.seekg(offset, std::ios::beg);
-        uint32_t header[2];
-        file.read(reinterpret_cast<char*>(header), sizeof(header));
-        uint32_t load_addr = header[0];
-        uint32_t data_length = header[1];
-
-       // std::cout << "Section " << static_cast<int>(i + 1) << ": addr = " << std::hex << load_addr << ", Length = " << data_length << std::endl;
-
-        std::vector<uint8_t> data(data_length);
-        file.read(reinterpret_cast<char*>(data.data()), data_length);
-
-        for (uint8_t byte : data) {
-            xor_sum ^= byte;
-        }
-
-        offset += 8 + data_length;
-    }
-    return xor_sum;
 }
 
 void revalidate_crc_nosha256(HWND hWnd)
 {
+    ClearLog(hEditLog);
     string inputBIN = "";
     inputBIN = ShowOpenFileDialogBIN(hWnd);
     if (inputBIN != "")
     {
         validate_esp32_bin(inputBIN);
-        MessageBox(hWnd, L"File CRC regenerated, SHA256 hash disabled", L"Done!", MB_ICONEXCLAMATION | MB_OK);
+        // Let the log notify the user
+        //MessageBox(hWnd, L"File CRC regenerated, SHA256 hash disabled", L"Done!", MB_ICONEXCLAMATION | MB_OK);
     }
 }
 
 void validate_esp32_bin(const std::string filename)
 {    
+    AppendLog(hEditLog, "-----------------------------\r\n");
+    AppendLog(hEditLog, "  Revalidating esp32 binary  \r\n");
+    AppendLog(hEditLog, "-----------------------------\r\n");
     ifstream input_bin(filename, ios::in | ios::binary);
     // Regenerate CRC and disable the Sha256 checksum
     // Step1: Read the entire outBin into memory
+    uint8_t stats_images = 0;
+    uint8_t stats_errors = 0;
+    uint8_t stats_sha256_disabledCount = 0;
+    uint8_t stats_crc_regenCount = 0;
     uint8_t* bin_data;
     uint8_t crc_value;
     // Get the file size, there is a faster way to do this, but for now this works
@@ -571,15 +589,360 @@ void validate_esp32_bin(const std::string filename)
     bin_data = (uint8_t*)malloc(filesize);
     input_bin.read((char*)bin_data, filesize);
     input_bin.close();
-    // Step2: Compute the CRC value's for each segment
-    crc_value = xor_sum_of_sections(filename);
-     // Step3: Update the CRC value
-    bin_data[filesize - 33] = crc_value;
-    // Step4: Change checksum to simple CRC mode
-    bin_data[23] = 0;
+    // Step2: Compute the CRC value's for each segment for each image in the file
+    uint32_t image_header = 0;
+    uint32_t file_position = 0; // position us at the beginning of the first segment
+    for (;file_position < filesize;)
+    {
+        if (bin_data[file_position] == 0xe9)
+        { // we have located an image 
+            AppendLog(hEditLog,"Image found at offset 0x" + std::to_string(file_position) + "\r\n");
+            esp_image_header_t* hdr = reinterpret_cast<esp_image_header_t*>(bin_data + file_position);
+            // Log SPI mode
+            AppendLog(hEditLog, "   Flash Mode: ");   
+            switch (hdr->spi_mode)
+            {
+            case 0:
+                AppendLog(hEditLog, "QIO\r\n");
+                break;
+            case 1:
+                AppendLog(hEditLog, "QOUT\r\n");
+                break;
+            case 2:
+                AppendLog(hEditLog, "DIO\r\n");
+                break;
+            case 3:
+                AppendLog(hEditLog, "DOUT\r\n");
+                break;
+            case 4:
+                AppendLog(hEditLog, "FAST READ\r\n");
+                break;
+            case 5:
+                AppendLog(hEditLog, "SLOW READ\r\n");
+                break;
+            default:
+                AppendLog(hEditLog, "Unknown\r\n");
+                break;
+            }
+            AppendLog(hEditLog, "      Chip ID: ");
+            switch (hdr->chip_id)
+            {
+            case ESP_CHIP_ID_ESP32:
+                AppendLog(hEditLog, "ESP32\r\n");
+                break;
+            case ESP_CHIP_ID_ESP32S2:
+                AppendLog(hEditLog, "ESP32-S2\r\n");
+                break;
+            case ESP_CHIP_ID_ESP32C3:
+                AppendLog(hEditLog, "ESP32-C3\r\n");
+                break;
+            case ESP_CHIP_ID_ESP32S3:
+                AppendLog(hEditLog, "ESP32-S3\r\n");
+                break;
+            case ESP_CHIP_ID_ESP32C2:
+                AppendLog(hEditLog, "ESP32-C2\r\n");
+                break;
+            case ESP_CHIP_ID_ESP32C6:
+                AppendLog(hEditLog, "ESP32-C6\r\n");
+                break;
+            case ESP_CHIP_ID_ESP32H2:
+                AppendLog(hEditLog, "ESP32-H2\r\n");
+                break;
+            case ESP_CHIP_ID_ESP32P4:
+                AppendLog(hEditLog, "ESP32-P4\r\n");
+                break;
+            case ESP_CHIP_ID_ESP32C5:
+                AppendLog(hEditLog, "ESP32-C5\r\n");
+                break;
+            case ESP_CHIP_ID_ESP32C61:
+                AppendLog(hEditLog, "ESP32-C61\r\n");
+                break;
+            case ESP_CHIP_ID_ESP32H21:
+                AppendLog(hEditLog, "ESP32-H21\r\n");
+                break;
+            case ESP_CHIP_ID_ESP32H4:
+                AppendLog(hEditLog, "ESP32-H4\r\n");
+                break;
+            case ESP_CHIP_ID_ESP32S31:
+                AppendLog(hEditLog, "ESP32-S31\r\n");
+                break;
+            default:
+                AppendLog(hEditLog, "Unknown\r\n");
+                break;
+            }
+            AppendLog(hEditLog, "Entry Address: ");
+            AppendLog_HEX(hEditLog, hdr->entry_addr);
+            AppendLog(hEditLog, "\r\n");
+            
+            stats_images++;
+            image_header = file_position;
+            file_position += 24; // position us at the beginning of the first segment
+            uint8_t segment_count = bin_data[image_header + 1]; // 2nd byte contains number of segments
+            // Log number of segments
+            AppendLog(hEditLog, "   Segments: " + std::to_string(segment_count) + "\r\n");
+            AppendLog(hEditLog, "-----------------------\r\n");
+            uint32_t segment_size = 0;
+            uint32_t segment_addr = 0;
+            crc_value = 0xef;
+            for (int j = 0; j < segment_count; j++)
+            {                
+                segment_addr =
+                    (uint32_t)bin_data[file_position] |
+                    ((uint32_t)bin_data[file_position + 1] << 8) |
+                    ((uint32_t)bin_data[file_position + 2] << 16) |
+                    ((uint32_t)bin_data[file_position + 3] << 24);
+                segment_size =
+                    (uint32_t)bin_data[file_position + 4] |
+                    ((uint32_t)bin_data[file_position + 5] << 8) |
+                    ((uint32_t)bin_data[file_position + 6] << 16) |
+                    ((uint32_t)bin_data[file_position + 7] << 24);
+                AppendLog(hEditLog, " Segment #" + std::to_string(j) + "\r\n     Load Addr: ");
+                AppendLog_HEX(hEditLog, segment_addr); // this would be its address in virtual space
+                AppendLog(hEditLog, "\r\n   File Offset: ");
+                AppendLog_HEX(hEditLog, file_position);
+                AppendLog(hEditLog, "\r\n          Size: " + std::to_string(segment_size) + " bytes\r\n");
+                file_position += 8; // skip over segment header
+                for (int i = 0; i < segment_size; i++)
+                {
+                    crc_value ^= bin_data[file_position];
+                    file_position++;
+                }
+            }
+            uint32_t padding = (16 - ((file_position + 1) % 16)) % 16; // imagesize+1 for crc, happens to be our value in file_position. Since all images are 16-byte aligned/padded we do not need to consider relative image positions
+            uint32_t crc_location = (file_position)+padding; // length of image prior to this+image_header position == file_position
+            uint8_t old_crc = bin_data[crc_location];
+            AppendLog(hEditLog, "Image original CRC:" + std::to_string(old_crc) + "\r\n");
+            AppendLog(hEditLog, "Image computed CRC:" + std::to_string(crc_value) + "\r\n");
+            // Step3: Update the CRC value, forced for now - to avoid sha256 errors on duplicate crcs
+            //if (crc_value != bin_data[crc_location])
+            {
+                if (crc_location > filesize)
+                {
+                    stats_errors++;
+                    crc_location = filesize - 33;// just a temporary thing until the crc locating is correct
+                    AppendLog(hEditLog, " ERROR!! Expectd CRC not located within file\r\n");
+                }
+                else
+                {
+                    stats_crc_regenCount++;
+                    bin_data[crc_location] = crc_value;
+                }
+                // Step4: Change checksum to simple CRC mode
+                if (bin_data[image_header + 23])
+                {
+                    AppendLog(hEditLog, "   Image has has sha256\r\n");
+                    bin_data[image_header + 23] = 0; // disables sha256
+                    file_position = crc_location + 32 + 1;
+                    AppendLog(hEditLog, "   Image sha256 has been disabled\r\n");
+                    stats_sha256_disabledCount++;
+                }
+                else
+                {
+                    AppendLog(hEditLog, "   Image had no sha256 to disable\r\n");
+                    file_position = crc_location + 1;
+                }                
+            }
+        }
+        else
+            file_position += 16;// image headers are always 16-byte aligned
+    }
     // Step5: Write output binary
     ofstream output_bin(filename, ios::out | ios::binary);
+    AppendLog(hEditLog, "-----------------------------\r\n");
+    AppendLog(hEditLog, "  Revalidation completed: " + std::to_string(filesize) + " bytes written\r\n");
     output_bin.write((char*)bin_data, filesize);
     output_bin.close();
+    free(bin_data);
+}
+
+void analyze_bin(const std::string filename)
+{
+    AppendLog(hEditLog, "-----------------------------\r\n");
+    AppendLog(hEditLog, "  Analyze esp32 binary  \r\n");
+    ifstream input_bin(filename, ios::in | ios::binary);
+    // Regenerate CRC and disable the Sha256 checksum
+    // Step1: Read the entire outBin into memory
+    uint8_t stats_images = 0;
+    uint8_t stats_errors = 0;
+    uint8_t stats_sha256_disabledCount = 0;
+    uint8_t stats_crc_regenCount = 0;
+    uint8_t* bin_data;
+    uint8_t crc_value;
+    // Get the file size, there is a faster way to do this, but for now this works
+    uint32_t filesize = 0;
+    char tempByte;
+    while (!input_bin.eof())
+    {
+        input_bin.read(&tempByte, 1); /// copy byte from input bin
+        if (!input_bin.eof())
+        {
+            filesize++;
+        }
+    }
+    input_bin.close();
+    input_bin.open(filename, ios::in | ios::binary);
+    bin_data = (uint8_t*)malloc(filesize);
+    input_bin.read((char*)bin_data, filesize);
+    input_bin.close();
+    // Step2: Compute the CRC value's for each segment for each image in the file
+    uint32_t image_header = 0;
+    uint32_t file_position = 0; // position us at the beginning of the first segment
+    for (;file_position < filesize;)
+    {
+        if (bin_data[file_position] == 0xe9)
+        { // we have located an image
+            AppendLog(hEditLog, "-----------------------------\r\n");
+            AppendLog(hEditLog, "Image found at offset 0x" + std::to_string(file_position) + "\r\n");
+            esp_image_header_t* hdr = reinterpret_cast<esp_image_header_t*>(bin_data + file_position);
+            // Log SPI mode
+            AppendLog(hEditLog, "   Flash Mode: ");
+            switch (hdr->spi_mode)
+            {
+            case 0:
+                AppendLog(hEditLog, "QIO\r\n");
+                break;
+            case 1:
+                AppendLog(hEditLog, "QOUT\r\n");
+                break;
+            case 2:
+                AppendLog(hEditLog, "DIO\r\n");
+                break;
+            case 3:
+                AppendLog(hEditLog, "DOUT\r\n");
+                break;
+            case 4:
+                AppendLog(hEditLog, "FAST READ\r\n");
+                break;
+            case 5:
+                AppendLog(hEditLog, "SLOW READ\r\n");
+                break;
+            default:
+                AppendLog(hEditLog, "Unknown\r\n");
+                break;
+            }
+            AppendLog(hEditLog, "      Chip ID: ");
+            switch (hdr->chip_id)
+            {
+            case ESP_CHIP_ID_ESP32:
+                AppendLog(hEditLog, "ESP32\r\n");
+                break;
+            case ESP_CHIP_ID_ESP32S2:
+                AppendLog(hEditLog, "ESP32-S2\r\n");
+                break;
+            case ESP_CHIP_ID_ESP32C3:
+                AppendLog(hEditLog, "ESP32-C3\r\n");
+                break;
+            case ESP_CHIP_ID_ESP32S3:
+                AppendLog(hEditLog, "ESP32-S3\r\n");
+                break;
+            case ESP_CHIP_ID_ESP32C2:
+                AppendLog(hEditLog, "ESP32-C2\r\n");
+                break;
+            case ESP_CHIP_ID_ESP32C6:
+                AppendLog(hEditLog, "ESP32-C6\r\n");
+                break;
+            case ESP_CHIP_ID_ESP32H2:
+                AppendLog(hEditLog, "ESP32-H2\r\n");
+                break;
+            case ESP_CHIP_ID_ESP32P4:
+                AppendLog(hEditLog, "ESP32-P4\r\n");
+                break;
+            case ESP_CHIP_ID_ESP32C5:
+                AppendLog(hEditLog, "ESP32-C5\r\n");
+                break;
+            case ESP_CHIP_ID_ESP32C61:
+                AppendLog(hEditLog, "ESP32-C61\r\n");
+                break;
+            case ESP_CHIP_ID_ESP32H21:
+                AppendLog(hEditLog, "ESP32-H21\r\n");
+                break;
+            case ESP_CHIP_ID_ESP32H4:
+                AppendLog(hEditLog, "ESP32-H4\r\n");
+                break;
+            case ESP_CHIP_ID_ESP32S31:
+                AppendLog(hEditLog, "ESP32-S31\r\n");
+                break;
+            default:
+                AppendLog(hEditLog, "Unknown\r\n");
+                break;
+            }
+            AppendLog(hEditLog, "Entry Address: ");
+            AppendLog_HEX(hEditLog, hdr->entry_addr);
+            AppendLog(hEditLog, "\r\n");
+
+            stats_images++;
+            image_header = file_position;
+            file_position += 24; // position us at the beginning of the first segment
+            uint8_t segment_count = bin_data[image_header + 1]; // 2nd byte contains number of segments
+            // Log number of segments
+            AppendLog(hEditLog, "   Segments: " + std::to_string(segment_count) + "\r\n");
+            AppendLog(hEditLog, "-----------------------\r\n");
+            uint32_t segment_size = 0;
+            uint32_t segment_addr = 0;
+            crc_value = 0xef;
+            for (int j = 0; j < segment_count; j++)
+            {
+                segment_addr =
+                    (uint32_t)bin_data[file_position] |
+                    ((uint32_t)bin_data[file_position + 1] << 8) |
+                    ((uint32_t)bin_data[file_position + 2] << 16) |
+                    ((uint32_t)bin_data[file_position + 3] << 24);
+                segment_size =
+                    (uint32_t)bin_data[file_position + 4] |
+                    ((uint32_t)bin_data[file_position + 5] << 8) |
+                    ((uint32_t)bin_data[file_position + 6] << 16) |
+                    ((uint32_t)bin_data[file_position + 7] << 24);
+                AppendLog(hEditLog, " Segment #" + std::to_string(j) + "\r\n     Load Addr: ");
+                AppendLog_HEX(hEditLog, segment_addr); // this would be its address in virtual space
+                AppendLog(hEditLog, "\r\n   File Offset: ");
+                AppendLog_HEX(hEditLog, file_position);
+                AppendLog(hEditLog, "\r\n          Size: " + std::to_string(segment_size) + " bytes\r\n");
+                file_position += 8; // skip over segment header
+                for (int i = 0; i < segment_size; i++)
+                {
+                    crc_value ^= bin_data[file_position];
+                    file_position++;
+                }
+            }
+            uint32_t padding = (16 - ((file_position + 1) % 16)) % 16; // imagesize+1 for crc, happens to be our value in file_position. Since all images are 16-byte aligned/padded we do not need to consider relative image positions
+            uint32_t crc_location = (file_position)+padding; // length of image prior to this+image_header position == file_position
+            uint8_t old_crc = bin_data[crc_location];
+            AppendLog(hEditLog, "Image original CRC:" + std::to_string(old_crc) + "\r\n");
+            AppendLog(hEditLog, "Image computed CRC:" + std::to_string(crc_value) + "\r\n");
+            // Step3: Update the CRC value, forced for now - to avoid sha256 errors on duplicate crcs
+            if (crc_value != bin_data[crc_location])
+                AppendLog(hEditLog, " **** WARNING **** CRC MISMATCH\r\n");
+
+            
+            if (crc_location > filesize)
+            {
+                stats_errors++;
+                crc_location = filesize - 33;// just a temporary thing until the crc locating is correct
+                AppendLog(hEditLog, " ERROR!! Expectd CRC not located within file\r\n");
+            }
+            else
+            {
+                stats_crc_regenCount++;
+                bin_data[crc_location] = crc_value;
+            }
+            // Step4: Change checksum to simple CRC mode
+            if (bin_data[image_header + 23])
+            {
+                AppendLog(hEditLog, "   Image has has sha256\r\n");
+                file_position = crc_location + 32 + 1;
+            }
+            else
+            {
+                AppendLog(hEditLog, "   Image has no sha256\r\n");
+                file_position = crc_location + 1;
+            }
+            
+        }
+        else
+            file_position += 16;// image headers are always 16-byte aligned
+    }
+    // End of file analysis
+    AppendLog(hEditLog, "-----------------------------\r\n");
+    AppendLog(hEditLog, "  Total binary file size: " + std::to_string(filesize) + " bytes \r\n");
     free(bin_data);
 }

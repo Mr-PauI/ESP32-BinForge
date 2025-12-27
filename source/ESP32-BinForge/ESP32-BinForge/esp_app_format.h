@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2015-2022 Espressif Systems (Shanghai) CO LTD
+ * SPDX-FileCopyrightText: 2015-2024 Espressif Systems (Shanghai) CO LTD
  *
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -8,10 +8,14 @@
 #include <inttypes.h>
 //#include "esp_assert.h"
 
- /**
-  * @brief ESP chip ID
-  *
-  */
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**
+ * @brief ESP chip ID
+ *
+ */
 typedef enum {
     ESP_CHIP_ID_ESP32 = 0x0000,  /*!< chip ID: ESP32 */
     ESP_CHIP_ID_ESP32S2 = 0x0002,  /*!< chip ID: ESP32-S2 */
@@ -21,9 +25,13 @@ typedef enum {
     ESP_CHIP_ID_ESP32C6 = 0x000D, /*!< chip ID: ESP32-C6 */
     ESP_CHIP_ID_ESP32H2 = 0x0010, /*!< chip ID: ESP32-H2 */
     ESP_CHIP_ID_ESP32P4 = 0x0012, /*!< chip ID: ESP32-P4 */
+    ESP_CHIP_ID_ESP32C5 = 0x0017, /*!< chip ID: ESP32-C5 */
+    ESP_CHIP_ID_ESP32C61= 0x0014, /*!< chip ID: ESP32-C61 */
+    ESP_CHIP_ID_ESP32H21= 0x0019, /*!< chip ID: ESP32-H21 */
+    ESP_CHIP_ID_ESP32H4 = 0x001C, /*!< chip ID: ESP32-H4 */
+    ESP_CHIP_ID_ESP32S31 = 0x0020, /*!< chip ID: ESP32-S31 */
     ESP_CHIP_ID_INVALID = 0xFFFF /*!< Invalid chip ID (we defined it to make sure the esp_chip_id_t is 2 bytes size) */
-} esp_chip_id_t;
-    //} __attribute__((packed)) esp_chip_id_t;
+}  esp_chip_id_t;
 
 /** @cond */
 //ESP_STATIC_ASSERT(sizeof(esp_chip_id_t) == 2, "esp_chip_id_t should be 16 bit");
@@ -71,12 +79,13 @@ typedef enum {
 /**
  * @brief Main header of binary image
  */
-typedef struct packed {
+#pragma pack(push, 1)
+typedef struct {
     uint8_t magic;              /*!< Magic word ESP_IMAGE_HEADER_MAGIC */
     uint8_t segment_count;      /*!< Count of memory segments */
     uint8_t spi_mode;           /*!< flash read mode (esp_image_spi_mode_t as uint8_t) */
-    uint8_t spi_speed : 4;       /*!< flash frequency (esp_image_spi_freq_t as uint8_t) */
-    uint8_t spi_size : 4;        /*!< flash chip size (esp_image_flash_size_t as uint8_t) */
+    uint8_t spi_speed: 4;       /*!< flash frequency (esp_image_spi_freq_t as uint8_t) */
+    uint8_t spi_size: 4;        /*!< flash chip size (esp_image_flash_size_t as uint8_t) */
     uint32_t entry_addr;        /*!< Entry address */
     uint8_t wp_pin;            /*!< WP pin when SPI pins set via efuse (read by ROM bootloader,
                                 * the IDF bootloader uses software to configure the WP
@@ -97,9 +106,8 @@ typedef struct packed {
                                  * is separate to secure boot and only used for detecting corruption.
                                  * For secure boot signed images, the signature
                                  * is appended after this (and the simple hash is included in the signed data). */
-} esp_image_header_t;
-                                 //} __attribute__((packed))  esp_image_header_t;
-
+}  esp_image_header_t;
+#pragma pack(pop)
 /** @cond */
 //ESP_STATIC_ASSERT(sizeof(esp_image_header_t) == 24, "binary image header should be 24 bytes");
 /** @endcond */
@@ -114,3 +122,7 @@ typedef struct {
 } esp_image_segment_header_t;
 
 #define ESP_IMAGE_MAX_SEGMENTS 16           /*!< Max count of segments in the image. */
+
+#ifdef __cplusplus
+}
+#endif
