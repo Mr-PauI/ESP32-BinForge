@@ -36,6 +36,7 @@ as compiled and flashed without modification. The next two terminal windows show
 - Does **not** currently detect or report structural errors in firmware images
 - Does **not** regenerate SHA-256 hashes
 - Does **not** validate injected data correctness beyond checksum updates
+- Does **not** strip SHA-256 hashes, meaning reprocessing a merged or validated binary should be currently avoided as the SHA-256 could be misinterpretted as a image header.
 
 ---
 
