@@ -30,7 +30,8 @@ as compiled and flashed without modification. The next two terminal windows show
  
 - **Examine .bin file contents**
   – Analyze ESP32 firmware images and display detailed segment information, including flash mode, chip type, entry address, segment load addresses, file offsets, sizes, CRC checks, and SHA-256 presence, providing a clear view of the binary contents.  - 
-<img width="437" height="593" alt="BinForge_GUI" src="https://github.com/user-attachments/assets/1afa48c8-dd5b-4a7f-9848-46f1fcecca10" />
+<img width="437" height="593" alt="BinForge_GUI" src="https://github.com/user-attachments/assets/fe370571-b20d-4fc5-bc33-bb11c703119f" />
+
 
 ---
 
