@@ -31,7 +31,7 @@ as compiled and flashed without modification. The next two terminal windows show
   - SHA-256 regeneration is planned for a future release
  
 - **Examine .bin file contents**
-  – Analyze ESP32 firmware images and display detailed segment information, including flash mode, chip type, entry address, segment load addresses, file offsets, sizes, CRC checks, and SHA-256 presence, providing a clear view of the binary contents.  - 
+  – Analyze ESP32 firmware images and display detailed segment information, including flash mode, chip type, entry address, segment load addresses, file offsets, sizes, CRC checks, and SHA-256 presence, providing a clear view of the binary contents. Basic structual errors are reported, as well as any CRC mismatch.
 <img width="437" height="593" alt="BinForge_GUI" src="https://github.com/user-attachments/assets/fe370571-b20d-4fc5-bc33-bb11c703119f" />
 
 
@@ -39,7 +39,6 @@ as compiled and flashed without modification. The next two terminal windows show
 
 ## What It Does *Not* Do (Yet)
 
-- Does **not** currently detect or report structural errors in firmware images
 - Does **not** regenerate SHA-256 hashes
 - Does **not** validate injected data correctness beyond checksum updates
 - Does **not** strip SHA-256 hashes, meaning reprocessing a merged or validated binary should be currently avoided as the SHA-256 could be misinterpretted as a image header.
