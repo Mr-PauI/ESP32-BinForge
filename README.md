@@ -6,7 +6,7 @@ The tool is designed for workflows where post-build customization is needed with
 
 The tool provides a reserved embedded region. The interpretation and use of that region is entirely user-defined.
 
-Data regions are defined by a randomly generated [magic byte](https://github.com/Mr-PauI/ESP32-BinForge/blob/main/blobs/blob_32b.h) sequence. This sequence is intentionally non‑compressible and prevents toolchain or linker optimizations from collapsing or deduplicating the region during compilation. The minimum size is 32bytes but headers have been provided for many standard sizes and the included blobgen tool can generate blobs of specific sizes.
+Data regions are defined by a randomly generated [magic byte](https://github.com/Mr-PauI/ESP32-BinForge/blob/main/blobs/blob_32b.h) sequence. This sequence is intentionally non‑compressible and prevents toolchain or linker optimizations from collapsing or deduplicating the region during compilation. The minimum size is 32bytes but headers have been provided for many standard sizes and the included [blobgen](https://github.com/Mr-PauI/ESP32-BinForge/blob/main/bin/windows-x86_x64/blobgen.exe) tool can generate blobs of specific sizes.
 
 Until user data is injected, the contents of this binary blob region should be considered undefined.  
   
