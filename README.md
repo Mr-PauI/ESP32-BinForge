@@ -1,15 +1,14 @@
 <img width="384" height="256" alt="image" src="https://github.com/user-attachments/assets/4a296cc2-7a35-4008-8cd0-3868c8d103b2" />
 
-
 **ESP32-BinForge** is a small utility for modifying and revalidating ESP32 firmware .bin files. It supports injecting custom data into firmware images and regenerating CRCs, allowing binaries to remain flashable after modification.
 
 The tool is designed for workflows where post-build customization is needed without recompiling firmware, such as embedding assets, configuration blobs, or replacing placeholder data.
 
 The tool provides a reserved embedded region. The interpretation and use of that region is entirely user-defined.
 
-Data regions are defined by a randomly generated [magic byte](https://github.com/Mr-PauI/ESP32-BinForge/blob/main/blobs/blob_32b.h) sequence. This sequence is intentionally non‑compressible and prevents toolchain or linker optimizations from collapsing or deduplicating the region during compilation.
+Data regions are defined by a randomly generated [magic byte](https://github.com/Mr-PauI/ESP32-BinForge/blob/main/blobs/blob_32b.h) sequence. This sequence is intentionally non‑compressible and prevents toolchain or linker optimizations from collapsing or deduplicating the region during compilation. The minimum size is 32bytes but headers have been provided for many standard sizes and the included blobgen tool can generate blobs of specific sizes.
 
-Until user data is injected, the contents of this region should be considered undefined.  
+Until user data is injected, the contents of this binary blob region should be considered undefined.  
   
 ---
 Below is a screen shot from 3 concurrent terminal sessions for the same firmware. The left most image represents the included demo firmware
@@ -28,6 +27,10 @@ as compiled and flashed without modification. The next two terminal windows show
 - **SHA-256 handling**
   - Currently disables the SHA-256 check (required for modified images)
   - SHA-256 regeneration is planned for a future release
+ 
+- **Examine .bin file contents**
+  – Analyze ESP32 firmware images and display detailed segment information, including flash mode, chip type, entry address, segment load addresses, file offsets, sizes, CRC checks, and SHA-256 presence, providing a clear view of the binary contents.  - 
+<img width="437" height="593" alt="BinForge_GUI" src="https://github.com/user-attachments/assets/1afa48c8-dd5b-4a7f-9848-46f1fcecca10" />
 
 ---
 
@@ -82,7 +85,7 @@ as compiled and flashed without modification. The next two terminal windows show
 ## Scope and Compatibility
 
 - Based on ESP32 firmware image specifications  
-- Intended for use with ESP32, ESP32-S2, ESP32-S3, ESP32-C3, ESP32-C6 and ESP32-P4
+- Intended for use with ESP32, ESP32-S2, ESP32-S3, ESP32-C2, ESP32-C3, ESP32-C5, ESP32-C6, ESP32-C61, ESP32-H2, ESP32-H21, ESP32-H4, ESP32-P4, and ESP32-S31
   (Compatibility with earlier Espressif MCUs has not yet been verified)
 
 ## Design Constraints
