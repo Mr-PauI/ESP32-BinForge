@@ -1,4 +1,5 @@
 
+<img width="464" height="65" alt="BinForge_Demo" src="https://github.com/user-attachments/assets/3759b629-1a4a-4039-b9d0-c9cb7f459e7c" />
 
 ## Intended Use Cases
 
