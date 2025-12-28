@@ -1,20 +1,20 @@
 <img width="384" height="256" alt="image" src="https://github.com/user-attachments/assets/4a296cc2-7a35-4008-8cd0-3868c8d103b2" />
 
-**ESP32-BinForge** is a small utility for modifying and revalidating ESP32 firmware .bin files. It supports injecting custom data into firmware images and regenerating CRCs, allowing binaries to remain flashable after modification.
+**ESP32-BinForge** is a compact tool for working with ESP32 firmware `.bin` files. It provides structured analysis of firmware images, supports in-place data injection, and regenerates CRCs to keep binaries flashable after modification — making post-build customization safe and straightforward.
 
 The tool is designed for workflows where post-build customization is needed without recompiling firmware, such as embedding assets, configuration blobs, or replacing placeholder data.
 
 The tool provides a reserved embedded region. The interpretation and use of that region is entirely user-defined.
 
-Data regions are defined by a randomly generated [magic byte](https://github.com/Mr-PauI/ESP32-BinForge/blob/main/blobs/blob_32b.h) sequence. This sequence is intentionally non‑compressible and prevents toolchain or linker optimizations from collapsing or deduplicating the region during compilation. The minimum size is 32bytes but headers have been provided for many standard sizes and the included [blobgen](https://github.com/Mr-PauI/ESP32-BinForge/blob/main/bin/windows-x86_x64/blobgen.exe) tool can generate blobs of specific sizes.
+Data regions are defined by a randomly generated [magic byte](https://github.com/Mr-PauI/ESP32-BinForge/blob/main/blobs/blob_32b.h) sequence.. This sequence is intentionally non‑compressible to prevent toolchain or linker optimizations from collapsing or deduplicating the region during compilation. The minimum size is 32 bytes, but headers for many standard sizes are provided, and the included [blobgen](https://github.com/Mr-PauI/ESP32-BinForge/blob/main/bin/windows-x86_x64/blobgen.exe) tool can generate blobs of specific sizes.
 
 Until user data is injected, the contents of this binary blob region should be considered undefined.  
   
 ---
 Below is a screen shot from 3 concurrent terminal sessions for the same firmware. The left most image represents the included demo firmware
 as compiled and flashed without modification. The next two terminal windows show the results after the compiled .bin file was processed with BinForge  
-<img width="436" height="592" alt="BinForge_GUI" src="https://github.com/user-attachments/assets/b856f5f9-68b3-4a58-9e0f-50ca898ce36d" />
 
+<img width="464" height="65" alt="BinForge_Demo" src="https://github.com/user-attachments/assets/bef7714f-a807-4aa7-a772-2d91592f76dd" />
 
 
 ## Current Features
@@ -32,7 +32,9 @@ as compiled and flashed without modification. The next two terminal windows show
  
 - **Examine .bin file contents**
   – Analyze ESP32 firmware images and display detailed segment information, including flash mode, chip type, entry address, segment load addresses, file offsets, sizes, CRC checks, and SHA-256 presence, providing a clear view of the binary contents. Basic structual errors are reported, as well as any CRC mismatch.
-<img width="437" height="593" alt="BinForge_GUI" src="https://github.com/user-attachments/assets/fe370571-b20d-4fc5-bc33-bb11c703119f" />
+
+
+<img width="436" height="592" alt="BinForge_GUI" src="https://github.com/user-attachments/assets/fb9452c1-a263-49fa-8e59-9d5cf6c1379e" />
 
 
 ---
