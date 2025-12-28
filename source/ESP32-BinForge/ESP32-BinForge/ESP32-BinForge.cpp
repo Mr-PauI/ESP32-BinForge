@@ -75,6 +75,12 @@ void ClearLog(HWND hEditLog)
     SetWindowText(hEditLog, L"");
 }
 
+std::streamsize get_file_size(const std::string& filename) {
+    std::ifstream file(filename, std::ios::binary | std::ios::ate);
+    return file.tellg();
+}
+
+
 // Function to show the open file dialog and return the selected file name
 std::string ShowOpenFileDialogBIN(HWND hwnd) {
     OPENFILENAME openFileDialog;       // Common dialog box structure
@@ -564,7 +570,6 @@ void validate_esp32_bin(const std::string filename)
     AppendLog(hEditLog, "-----------------------------\r\n");
     AppendLog(hEditLog, "  Revalidating esp32 binary  \r\n");
     AppendLog(hEditLog, "-----------------------------\r\n");
-    ifstream input_bin(filename, ios::in | ios::binary);
     // Regenerate CRC and disable the Sha256 checksum
     // Step1: Read the entire outBin into memory
     uint8_t stats_images = 0;
@@ -574,18 +579,8 @@ void validate_esp32_bin(const std::string filename)
     uint8_t* bin_data;
     uint8_t crc_value;
     // Get the file size, there is a faster way to do this, but for now this works
-    uint32_t filesize=0;
-    char tempByte;
-    while (!input_bin.eof())
-    {
-        input_bin.read(&tempByte, 1); /// copy byte from input bin
-        if (!input_bin.eof())
-        {
-            filesize++;
-        }
-    }
-    input_bin.close();
-    input_bin.open(filename, ios::in | ios::binary);
+    uint32_t filesize=(uint32_t)get_file_size(filename);
+    ifstream input_bin(filename, ios::in | ios::binary);
     bin_data = (uint8_t*)malloc(filesize);
     input_bin.read((char*)bin_data, filesize);
     input_bin.close();
@@ -702,7 +697,7 @@ void validate_esp32_bin(const std::string filename)
                 AppendLog_HEX(hEditLog, file_position);
                 AppendLog(hEditLog, "\r\n          Size: " + std::to_string(segment_size) + " bytes\r\n");
                 file_position += 8; // skip over segment header
-                for (int i = 0; i < segment_size; i++)
+                for (unsigned int i = 0; i < segment_size; i++)
                 {
                     crc_value ^= bin_data[file_position];
                     file_position++;
@@ -713,7 +708,7 @@ void validate_esp32_bin(const std::string filename)
             uint8_t old_crc = bin_data[crc_location];
             AppendLog(hEditLog, "Image original CRC:" + std::to_string(old_crc) + "\r\n");
             AppendLog(hEditLog, "Image computed CRC:" + std::to_string(crc_value) + "\r\n");
-            // Step3: Update the CRC value, forced for now - to avoid sha256 errors on duplicate crcs
+            // Step3: Update the CRC value, disable sha256 ; forced for now - to avoid sha256 errors on duplicate crcs
             //if (crc_value != bin_data[crc_location])
             {
                 if (crc_location > filesize)
@@ -759,7 +754,7 @@ void analyze_bin(const std::string filename)
 {
     AppendLog(hEditLog, "-----------------------------\r\n");
     AppendLog(hEditLog, "  Analyze esp32 binary  \r\n");
-    ifstream input_bin(filename, ios::in | ios::binary);
+    
     // Regenerate CRC and disable the Sha256 checksum
     // Step1: Read the entire outBin into memory
     uint8_t stats_images = 0;
@@ -769,18 +764,8 @@ void analyze_bin(const std::string filename)
     uint8_t* bin_data;
     uint8_t crc_value;
     // Get the file size, there is a faster way to do this, but for now this works
-    uint32_t filesize = 0;
-    char tempByte;
-    while (!input_bin.eof())
-    {
-        input_bin.read(&tempByte, 1); /// copy byte from input bin
-        if (!input_bin.eof())
-        {
-            filesize++;
-        }
-    }
-    input_bin.close();
-    input_bin.open(filename, ios::in | ios::binary);
+    uint32_t filesize = (uint32_t)get_file_size(filename);
+    ifstream input_bin(filename, ios::in | ios::binary);
     bin_data = (uint8_t*)malloc(filesize);
     input_bin.read((char*)bin_data, filesize);
     input_bin.close();
@@ -898,7 +883,7 @@ void analyze_bin(const std::string filename)
                 AppendLog_HEX(hEditLog, file_position);
                 AppendLog(hEditLog, "\r\n          Size: " + std::to_string(segment_size) + " bytes\r\n");
                 file_position += 8; // skip over segment header
-                for (int i = 0; i < segment_size; i++)
+                for (unsigned int i = 0; i < segment_size; i++)
                 {
                     crc_value ^= bin_data[file_position];
                     file_position++;
@@ -918,7 +903,7 @@ void analyze_bin(const std::string filename)
             {
                 stats_errors++;
                 crc_location = filesize - 33;// just a temporary thing until the crc locating is correct
-                AppendLog(hEditLog, " ERROR!! Expectd CRC not located within file\r\n");
+                AppendLog(hEditLog, " ERROR!! Expectd CRC not located within file. Segment header faulty or file incomplete.\r\n");
             }
             else
             {
