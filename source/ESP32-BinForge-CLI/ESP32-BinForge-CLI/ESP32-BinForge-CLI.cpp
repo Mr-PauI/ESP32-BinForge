@@ -90,10 +90,13 @@ void merge_rom_cli(const std::string& inputBIN, const std::string& inputROM, con
     // Open files
     ifstream input_bin(inputBIN, ios::binary);
     ifstream input_rom(inputROM, ios::binary);
+
+    if (!input_bin.is_open() || !input_rom.is_open())
+        throw runtime_error("Failed to open one of the files.");
     ofstream output_bin(outputBIN, ios::binary);
 
-    if (!input_bin.is_open() || !input_rom.is_open() || !output_bin.is_open())
-        throw runtime_error("Failed to open one of the files.");
+    if (!output_bin.is_open())
+        throw runtime_error("Failed to create output file.");
 
     cout << " Injecting data into bin file  \r\n";
 
