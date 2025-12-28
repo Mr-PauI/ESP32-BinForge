@@ -674,7 +674,7 @@ void validate_esp32_bin(const std::string filename)
             file_position += 24; // position us at the beginning of the first segment
             uint8_t segment_count = bin_data[image_header + 1]; // 2nd byte contains number of segments
             // Log number of segments
-            AppendLog(hEditLog, "   Segments: " + std::to_string(segment_count) + "\r\n");
+            AppendLog(hEditLog, "     Segments: " + std::to_string(segment_count) + "\r\n");
             AppendLog(hEditLog, "-----------------------\r\n");
             uint32_t segment_size = 0;
             uint32_t segment_addr = 0;
@@ -860,7 +860,7 @@ void analyze_bin(const std::string filename)
             file_position += 24; // position us at the beginning of the first segment
             uint8_t segment_count = bin_data[image_header + 1]; // 2nd byte contains number of segments
             // Log number of segments
-            AppendLog(hEditLog, "   Segments: " + std::to_string(segment_count) + "\r\n");
+            AppendLog(hEditLog, "     Segments: " + std::to_string(segment_count) + "\r\n");
             AppendLog(hEditLog, "-----------------------\r\n");
             uint32_t segment_size = 0;
             uint32_t segment_addr = 0;
