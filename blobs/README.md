@@ -51,7 +51,7 @@ BinForge does not impose any semantic meaning on blob contents.
 
 ## BinForge.h
 
-`BinForge.h` provides lightweight helper definitions for locating and accessing BinForge-injected blobs at runtime.
+`BinForge.h` provides lightweight helper definitions for detecting BinForge-injected blobs status at runtime.
 
 It is designed to be:
 
