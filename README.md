@@ -13,8 +13,8 @@ Until user data is injected, the contents of this binary blob region should be c
 ---
 Below is a screen shot from 3 concurrent terminal sessions for the same firmware. The left most image represents the included demo firmware
 as compiled and flashed without modification. The next two terminal windows show the results after the compiled .bin file was processed with BinForge  
-<img width="436" height="592" alt="BinForge_GUI" src="https://github.com/user-attachments/assets/b856f5f9-68b3-4a58-9e0f-50ca898ce36d" />
 
+<img width="464" height="65" alt="BinForge_Demo" src="https://github.com/user-attachments/assets/bef7714f-a807-4aa7-a772-2d91592f76dd" />
 
 
 ## Current Features
@@ -32,7 +32,9 @@ as compiled and flashed without modification. The next two terminal windows show
  
 - **Examine .bin file contents**
   – Analyze ESP32 firmware images and display detailed segment information, including flash mode, chip type, entry address, segment load addresses, file offsets, sizes, CRC checks, and SHA-256 presence, providing a clear view of the binary contents. Basic structual errors are reported, as well as any CRC mismatch.
-<img width="437" height="593" alt="BinForge_GUI" src="https://github.com/user-attachments/assets/fe370571-b20d-4fc5-bc33-bb11c703119f" />
+
+
+<img width="436" height="592" alt="BinForge_GUI" src="https://github.com/user-attachments/assets/fb9452c1-a263-49fa-8e59-9d5cf6c1379e" />
 
 
 ---
