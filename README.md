@@ -40,9 +40,9 @@ as compiled and flashed without modification. The next two terminal windows show
 
 ---
 
-## What It Does *Not* Do (Yet)
+## What It Does *Not* Do
 
-- Does **not** regenerate SHA-256 hashes
+- Does **not** regenerate SHA-256 hashes (Yet)
 - Does **not** validate injected data correctness beyond checksum updates
 - Does **not** strip SHA-256 hashes, meaning reprocessing a merged or validated binary should be currently avoided as the SHA-256 could be misinterpretted as a image header.
 
