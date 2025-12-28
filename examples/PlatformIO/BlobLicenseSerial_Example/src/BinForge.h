@@ -1,4 +1,4 @@
-// BlobData.h
+// BinFogre.h
 #pragma once
 #include <cstdint>
 #include <cstddef>
