@@ -4,7 +4,7 @@ This directory contains pregenerated blobs of common sizes and minimal tooling r
 
 Injected blobs are arbitrary data regions embedded into a merged ESP32 firmware image and later interpreted at runtime by firmware code.
 
-See the examples directory for usage details.
+See the [examples directory](https://github.com/Mr-PauI/ESP32-BinForge/tree/main/examples) for usage details.
 
 ---
 
