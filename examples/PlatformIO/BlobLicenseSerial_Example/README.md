@@ -1,5 +1,9 @@
-
+Terminal results of the BlobLicenseSerial Example:  
 <img width="464" height="65" alt="BinForge_Demo" src="https://github.com/user-attachments/assets/3759b629-1a4a-4039-b9d0-c9cb7f459e7c" />
+To recreate this test:
+- compile and merge your .bin image as `BinForge_TestApp.bin`
+- copy .bin to the `/client_blobs` directory
+- run 'generate_client_firmware.bat'(or manually invoke `./ESP32-BinForge-CLI BinForge_TestApp.bin client_a_data.dat BinForge_ClientA.bin')
 
 ## Intended Use Cases
 
