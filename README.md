@@ -80,7 +80,7 @@ as compiled and flashed without modification. The next two terminal windows show
 - **Licensing, provisioning, and device personalization**  
   Inject per-device keys, license numbers, API tokens, or other metadata without rebuilding the firmware. CRC checks allow firmware to detect whether injected data remains in its default state.
 
-- **Tooling and automation pipelines** *(planned CLI tool)*  
+- **Tooling and automation pipelines** 
   Integrate into scripts or CI systems for repeatable post-build firmware modification.
 
 
