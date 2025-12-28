@@ -22,6 +22,7 @@ as compiled and flashed without modification. The next two terminal windows show
 - **Data injection**
   - Injects user-supplied data into predefined regions of a firmware image
   - Automatically regenerates the CRC after injection
+  - Includes [PlatformIO](https://github.com/Mr-PauI/ESP32-BinForge/tree/main/examples/PlatformIO) and [Arduino](https://github.com/Mr-PauI/ESP32-BinForge/tree/main/examples/Arduino) examples
 
 - **CRC-only mode**
   - Regenerates the CRC for binaries modified by external tools
