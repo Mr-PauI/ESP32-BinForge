@@ -26,7 +26,7 @@ Usage:
 ```
 ESP32-BinForge-CLI <input.bin>                                 # Analyze .bin file  
 ESP32-BinForge-CLI <input.bin> <output.bin>                    # regenerate CRC only  
-ESP32-BinForge-CLI <input.bin> <data_to_add.dat> <output.bin>  # merge data and regenerate  
+ESP32-BinForge-CLI <input.bin> <data_to_add.dat> <output.bin>  # merge data and regenerate CRC  
 ```
 
 ## blobgen  
