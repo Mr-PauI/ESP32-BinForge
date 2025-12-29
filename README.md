@@ -16,6 +16,11 @@ as compiled and flashed without modification. The next two terminal windows show
 
 <img width="928" height="130" alt="BinForge_Demo" src="https://github.com/user-attachments/assets/bef7714f-a807-4aa7-a772-2d91592f76dd" />
 
+Example CLI usage to produce the above results:
+```
+ESP32-BinForge-CLI BinForge_TestApp.bin client_a_data.dat BinForge_ClientA.bin
+ESP32-BinForge-CLI BinForge_TestApp.bin client_b_data.dat BinForge_ClientB.bin
+```
 
 ## Current Features
 
