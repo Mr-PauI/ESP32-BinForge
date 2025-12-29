@@ -21,6 +21,7 @@ Example CLI usage to produce the above results:
 ESP32-BinForge-CLI BinForge_TestApp.bin client_a_data.dat BinForge_ClientA.bin
 ESP32-BinForge-CLI BinForge_TestApp.bin client_b_data.dat BinForge_ClientB.bin
 ```
+See the [wiki](https://github.com/Mr-PauI/ESP32-BinForge/wiki/CLI-Usage) for complete usage details
 
 ## Current Features
 
