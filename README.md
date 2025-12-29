@@ -16,12 +16,27 @@ as compiled and flashed without modification. The next two terminal windows show
 
 <img width="928" height="130" alt="BinForge_Demo" src="https://github.com/user-attachments/assets/bef7714f-a807-4aa7-a772-2d91592f76dd" />
 
-Example CLI usage to produce the above results:
+BinForge provides two CLI tools for working with firmware blobs and managing .bin files: `blobgen` and `ESP32-BinForge-CLI`.
+
+---
+## ESP32-BinForge-CLI  
+This tool provides several functions depending on the arguments passed.
+  
+Usage:  
 ```
-ESP32-BinForge-CLI BinForge_TestApp.bin client_a_data.dat BinForge_ClientA.bin
-ESP32-BinForge-CLI BinForge_TestApp.bin client_b_data.dat BinForge_ClientB.bin
+ESP32-BinForge-CLI <input.bin>                                 # Analyze .bin file  
+ESP32-BinForge-CLI <input.bin> <output.bin>                    # regenerate CRC only  
+ESP32-BinForge-CLI <input.bin> <data_to_add.dat> <output.bin>  # merge data and regenerate  
 ```
-See the [wiki](https://github.com/Mr-PauI/ESP32-BinForge/wiki/CLI-Usage) for complete usage details
+
+## blobgen  
+This tool is used to create reserved binary blobs of specific sizes.
+
+Usage: 
+```
+blobgen <num_bytes> <output.h>
+```
+
 
 ## Current Features
 
