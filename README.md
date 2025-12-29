@@ -16,9 +16,9 @@ as compiled and flashed without modification. The next two terminal windows show
 
 <img width="928" height="130" alt="BinForge_Demo" src="https://github.com/user-attachments/assets/bef7714f-a807-4aa7-a772-2d91592f76dd" />
 
+---
 BinForge provides two CLI tools for working with firmware blobs and managing .bin files: `blobgen` and `ESP32-BinForge-CLI`.
 
----
 ## ESP32-BinForge-CLI  
 This tool provides several functions depending on the arguments passed.
   
