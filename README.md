@@ -37,6 +37,7 @@ Usage:
 blobgen <num_bytes> <output.h>
 ```
 
+See the [Wiki](https://github.com/Mr-PauI/ESP32-BinForge/wiki/GUI-Usage) for BinForge GUI usage information.
 
 ## Current Features
 
