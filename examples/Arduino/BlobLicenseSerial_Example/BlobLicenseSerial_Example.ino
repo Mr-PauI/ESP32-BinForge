@@ -24,7 +24,7 @@ void setup() {
     Serial.print("Name: ");
     Serial.println(blob_contents->name);
     Serial.print("BCD Serial No: ");
-    // Blob data should be considered undefined
+    // Blob data should be considered defined
     for (int i = 0; i < 16; i++) {
       Serial.print(blob_contents->BCDserialNo[i]); // Each digit is a byte
       if ((i != 0) & !(i % 4))
