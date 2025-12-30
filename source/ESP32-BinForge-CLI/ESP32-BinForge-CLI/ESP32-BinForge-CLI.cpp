@@ -409,7 +409,7 @@ void analyze_bin(const std::string filename)
                 }
             }
             uint32_t padding = (16 - ((file_position + 1) % 16)) % 16; // imagesize+1 for crc, happens to be our value in file_position. Since all images are 16-byte aligned/padded we do not need to consider relative image positions
-            uint32_t crc_location = (file_position)+padding; // length of image prior to this+image_header position == file_position
+            uint32_t crc_location = (file_position)+padding;
             uint8_t old_crc = bin_data[crc_location];
             cout <<  " Image original CRC:" + std::to_string(old_crc) + "\r\n";
             cout <<  " Image computed CRC:" + std::to_string(crc_value) + "\r\n";
