@@ -725,7 +725,7 @@ void validate_esp32_bin(const std::string filename)
                 // Step4: Change checksum to simple CRC mode
                 if (bin_data[image_header + 23])
                 {
-                    AppendLog(hEditLog, "   Image has has sha256\r\n");
+                    AppendLog(hEditLog, "   Image has sha256\r\n");
                     bin_data[image_header + 23] = 0; // disables sha256
                     file_position = crc_location + 32 + 1;
                     AppendLog(hEditLog, "   Image sha256 has been disabled\r\n");
@@ -913,7 +913,7 @@ void analyze_bin(const std::string filename)
             // Step4: Change checksum to simple CRC mode
             if (bin_data[image_header + 23])
             {
-                AppendLog(hEditLog, "   Image has has sha256\r\n");
+                AppendLog(hEditLog, "   Image has sha256\r\n");
                 file_position = crc_location + 32 + 1;
             }
             else
