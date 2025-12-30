@@ -56,8 +56,7 @@ See the [Wiki](https://github.com/Mr-PauI/ESP32-BinForge/wiki/GUI-Usage) for Bin
 - **Examine .bin file contents**
   – Analyze ESP32 firmware images and display detailed segment information, including flash mode, chip type, entry address, segment load addresses, file offsets, sizes, CRC checks, and SHA-256 presence, providing a clear view of the binary contents. Basic structual errors are reported, as well as any CRC mismatch.
 
-
-<img width="436" height="592" alt="BinForge_GUI" src="https://github.com/user-attachments/assets/fb9452c1-a263-49fa-8e59-9d5cf6c1379e" />
+<img width="428" height="592" alt="BinForge_GUI" src="https://github.com/user-attachments/assets/79d0224d-156a-47b3-bab8-63673b46f7c0" />
 
 
 ---
