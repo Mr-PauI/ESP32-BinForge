@@ -47,4 +47,4 @@ By contributing to ESP32-BinForge, you agree to follow the [MIT License](LICENSE
 Feel free to reach out if you have specific questions.
 
 
-We welcome contributions of any size. Even small fixes, bug reports, or suggestions help improve ESP32-BinForge for everyone.
+I welcome contributions of any size. Even small fixes, bug reports, or suggestions help improve ESP32-BinForge for everyone.
