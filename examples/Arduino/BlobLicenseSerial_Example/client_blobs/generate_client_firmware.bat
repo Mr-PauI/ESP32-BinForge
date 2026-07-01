@@ -1,2 +1,0 @@
-..\..\..\..\bin\windows-x86_x64\ESP32-BinForge-CLI.exe BinForge_TestApp.bin client_a_data.dat BinForge_ClientA.bin
-..\..\..\..\bin\windows-x86_x64\ESP32-BinForge-CLI.exe BinForge_TestApp.bin client_b_data.dat BinForge_ClientB.bin
