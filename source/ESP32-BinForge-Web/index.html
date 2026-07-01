@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BinForge</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div id="app">
+
+    <!-- Top Bar -->
+    <div id="topbar">
+        <div class="title">BinForge</div>
+        <div class="menu">
+            <button id="aboutBtn">About</button>
+        </div>
+    </div>
+
+    <!-- Main Layout -->
+    <div id="main">
+
+        <!-- Firmware Panel -->
+        <div class="panel" id="firmwarePanel">
+            <h2>Firmware</h2>
+
+            <div id="fileBox">
+                <p id="fileStatus">No firmware loaded</p>
+                <input type="file" id="fileInput">
+            </div>
+        </div>
+
+        <!-- Analysis Panel -->
+        <div class="panel" id="analysisPanel">
+            <h2>Analysis</h2>
+            <pre id="analysisOutput">Waiting for firmware...</pre>
+        </div>
+
+        <!-- Operations Panel -->
+        <div class="panel" id="opsPanel">
+            <h2>Operations</h2>
+
+            <button disabled>Inject Data</button>
+            <button disabled>Recalculate CRC</button>
+            <button disabled>Export</button>
+        </div>
+
+        <!-- Status Panel -->
+        <div class="panel" id="statusPanel">
+            <h2>Status</h2>
+            <div id="statusText">Ready</div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- About Modal -->
+<div id="aboutModal" class="modal hidden">
+    <div class="modal-content">
+
+        <div class="about-header">
+            <img src="assets/logo.svg" class="logo" alt="BinForge Logo">
+            <div>
+                <h1>BinForge</h1>
+                <div class="subtitle">Firmware Analysis & Injection Tool</div>
+            </div>
+        </div>
+
+        <div class="about-body">
+            <p>Version: 0.1.0 (Web Prototype)</p>
+            <p>Cross-platform firmware analysis toolkit.</p>
+
+            <hr>
+
+            <p>Core features (planned):</p>
+            <ul>
+                <li>Firmware structure analysis</li>
+                <li>Data injection and patching</li>
+                <li>CRC validation and repair</li>
+                <li>ESP32-focused tooling</li>
+            </ul>
+        </div>
+
+        <div class="about-footer">
+            <button id="closeAboutBtn">Close</button>
+        </div>
+
+    </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
