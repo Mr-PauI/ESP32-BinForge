@@ -6,6 +6,9 @@ document.addEventListener("DOMContentLoaded", () => {
         binarySize: 0
     };
 
+    // ----------------------------------------------------
+    // WASM state (ONLY ONCE — FIXED)
+    // ----------------------------------------------------
     let ModuleInstance = null;
     let wasmReady = false;
 
@@ -27,33 +30,31 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // ----------------------------------------------------
-    // WASM init (MODULARIZE=1 + correct path handling)
+    // WASM init (MODULARIZE=1 + correct Emscripten style)
     // ----------------------------------------------------
-let ModuleInstance = null;
-let wasmReady = false;
+    function initWASM() {
 
-function initWASM() {
+        if (typeof BinForgeWASM !== "function") {
+            console.error("BinForgeWASM not available yet");
+            return;
+        }
 
-    if (typeof BinForgeWASM !== "function") {
-        console.error("BinForgeWASM not available yet");
-        return;
+        BinForgeWASM({
+            locateFile: (path) =>
+                new URL("./wasm/" + path, document.baseURI).href,
+
+            onRuntimeInitialized: function () {
+                ModuleInstance = this;
+                wasmReady = true;
+
+                console.log("WASM ready");
+
+                statusText.textContent = "Waiting for firmware...";
+            }
+        });
     }
 
-    BinForgeWASM({
-        locateFile: (path) =>
-            new URL("./wasm/" + path, document.baseURI).href,
-
-        onRuntimeInitialized: function () {
-            ModuleInstance = this;
-            wasmReady = true;
-
-            console.log("WASM ready");
-            statusText.textContent = "WASM ready";
-        }
-    });
-}
-
-window.addEventListener("load", initWASM);
+    window.addEventListener("load", initWASM);
 
     // ----------------------------------------------------
     // File load + immediate analysis
@@ -70,6 +71,7 @@ window.addEventListener("load", initWASM);
         state.binarySize = state.binaryData.length;
 
         fileStatus.textContent = file.name;
+
         statusText.textContent =
             "Binary loaded (" + state.binarySize + " bytes)";
 
