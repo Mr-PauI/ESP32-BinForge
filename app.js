@@ -40,17 +40,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         BinForgeWASM({
-            locateFile: (path) =>
-                new URL("./wasm/" + path, document.baseURI).href,
-
-            onRuntimeInitialized: function () {
-                ModuleInstance = this;
-                wasmReady = true;
-
-                console.log("WASM ready");
-
-                statusText.textContent = "Waiting for firmware...";
-            }
+		locateFile: (path) => {
+		    return new URL("wasm/" + path, window.location.href).href;
+		}
         });
     }
 
