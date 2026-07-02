@@ -29,10 +29,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // ----------------------------------------------------
     // WASM init (MODULARIZE=1 + correct path handling)
     // ----------------------------------------------------
-    import("./wasm/build/binforge.js")
+    import("./wasm/binforge.js")
         .then((createModule) => {
             return createModule.default({
-                locateFile: (path) => "./wasm/build/" + path
+                locateFile: (path) => "./wasm/" + path
             });
         })
         .then((Module) => {
