@@ -1,6 +1,6 @@
 #pragma once
 #include <stdint.h>
-
+#include "esp_app_format.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
