@@ -84,7 +84,7 @@ void analyze_esp32_binary(const uint8_t* bin_data, uint32_t filesize)
         if (bin_data[file_position] == 0xe9)
         { // we have located an image
             bf_log("-----------------------------\n");
-            bf_log("Image found at offset 0x%x\n",file_position);
+            bf_log("ESP32 Image header found at offset 0x%x\n",file_position);
             //esp_image_header_t* hdr = reinterpret_cast<esp_image_header_t*>(bin_data + file_position);
             esp_image_header_t* hdr = reinterpret_cast<esp_image_header_t*>(const_cast<uint8_t*>(bin_data + file_position));
             // Log SPI mode
@@ -160,7 +160,7 @@ void analyze_esp32_binary(const uint8_t* bin_data, uint32_t filesize)
                 bf_log("Unknown\n");
                 break;
             }
-            bf_log("Entry Address: 0x%080\nx", hdr->entry_addr);
+            bf_log("Entry Address: 0x%08x\n", hdr->entry_addr);
 
             stats_images++;
             image_header = file_position;
@@ -234,5 +234,5 @@ void analyze_esp32_binary(const uint8_t* bin_data, uint32_t filesize)
     }
     // End of file analysis
     bf_log("-----------------------------\n");
-    bf_log("  Total binary file size: %d bytes \n",filesize);
+    bf_log("  Total binary file size: %" PRIu32 " bytes \n",filesize);
 }
