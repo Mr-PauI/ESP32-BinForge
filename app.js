@@ -29,23 +29,34 @@ document.addEventListener("DOMContentLoaded", () => {
     // ----------------------------------------------------
     // WASM init (MODULARIZE=1 + correct path handling)
     // ----------------------------------------------------
-    import("./wasm/binforge.js")
-        .then((createModule) => {
-            return createModule.default({
-                locateFile: (path) => "./wasm/" + path
-            });
-        })
-        .then((Module) => {
-            ModuleInstance = Module;
-            wasmReady = true;
-            console.log("WASM ready");
+import("./wasm/binforge.js")
+    .then((mod) => {
 
-            statusText.textContent = "WASM ready";
-        })
-        .catch((err) => {
-            console.error("WASM failed to load:", err);
-            statusText.textContent = "WASM failed to load";
+        const factory =
+            mod.default ||
+            mod.BinForgeWASM ||
+            mod;
+
+        if (typeof factory !== "function") {
+            throw new Error("WASM factory not found in module export");
+        }
+
+        return factory({
+            locateFile: (path) =>
+                new URL("./wasm/" + path, document.baseURI).href
         });
+    })
+    .then((Module) => {
+        ModuleInstance = Module;
+        wasmReady = true;
+
+        console.log("WASM ready");
+        statusText.textContent = "WASM ready";
+    })
+    .catch((err) => {
+        console.error("WASM failed to load:", err);
+        statusText.textContent = "WASM failed to load";
+    });
 
     // ----------------------------------------------------
     // File load + immediate analysis
