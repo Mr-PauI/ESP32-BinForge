@@ -39,11 +39,20 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        BinForgeWASM({
-		locateFile: (path) => {
-		    return new URL("wasm/" + path, window.location.href).href;
-		}
-        });
+	BinForgeWASM({
+  	  locateFile: (path) =>
+ 	       new URL("wasm/" + path, window.location.href).href
+	})
+	.then((Module) => {
+
+	    ModuleInstance = Module;
+	    wasmReady = true;
+
+	    console.log("WASM ready");
+ 	   console.log("HEAPU8:", Module.HEAPU8);
+
+	    statusText.textContent = "Waiting for firmware...";
+	});
     }
 
     window.addEventListener("load", initWASM);
