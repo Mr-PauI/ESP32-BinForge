@@ -5,22 +5,54 @@ body {
     color: #ddd;
 }
 
+/*=========================================================
+    Top Bar
+=========================================================*/
+
 #topbar {
     display: flex;
     justify-content: space-between;
-    padding: 10px;
+    align-items: center;
+    padding: 12px 16px;
     background: #2a2a2a;
     border-bottom: 1px solid #444;
 }
 
-.title {
-    font-weight: bold;
+.branding {
+    display: flex;
+    align-items: center;
+    gap: 14px;
 }
+
+.header-logo {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+}
+
+.title-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.title {
+    font-size: 1.6em;
+    font-weight: bold;
+    color: white;
+}
+
+.subtitle {
+    font-size: 0.9em;
+    color: #9fa6ad;
+}
+
+/*=========================================================
+    Main Layout
+=========================================================*/
 
 #main {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
     padding: 10px;
 }
@@ -28,14 +60,20 @@ body {
 .panel {
     background: #252525;
     border: 1px solid #444;
-    padding: 10px;
+    border-radius: 8px;
+    padding: 12px;
 }
+
+/*=========================================================
+    Controls
+=========================================================*/
 
 #analysisOutput {
     background: #111;
     padding: 10px;
     height: 200px;
     overflow: auto;
+    border-radius: 4px;
 }
 
 button {
@@ -45,7 +83,12 @@ button {
     background: #3a3a3a;
     color: #ddd;
     border: 1px solid #555;
+    border-radius: 4px;
     cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+    background: #444;
 }
 
 button:disabled {
@@ -57,38 +100,36 @@ input[type="file"] {
     margin-top: 10px;
 }
 
+/*=========================================================
+    About Dialog
+=========================================================*/
 
-/* Full-screen overlay */
 .modal {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
+    inset: 0;
+    background: rgba(0, 0, 0, 0.70);
 
-    display: none;   /* 👈 KEY CHANGE */
+    display: none;
     align-items: center;
     justify-content: center;
 
     z-index: 999;
 }
 
-/* active state */
 .modal.open {
     display: flex;
 }
 
-/* modal box */
 .modal-content {
     background: #2a2a2a;
     border: 1px solid #555;
+    border-radius: 8px;
     padding: 20px;
     width: 420px;
+    max-width: 90vw;
     color: #ddd;
 }
 
-/* Header layout */
 .about-header {
     display: flex;
     align-items: center;
@@ -97,13 +138,9 @@ input[type="file"] {
 }
 
 .logo {
-    width: 48px;
-    height: 48px;
-}
-
-.subtitle {
-    font-size: 12px;
-    opacity: 0.7;
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
 }
 
 .about-body {
@@ -118,4 +155,38 @@ input[type="file"] {
 hr {
     border: 0;
     border-top: 1px solid #444;
+}
+
+/*=========================================================
+    Responsive Layout
+=========================================================*/
+
+@media (max-width: 900px) {
+
+    #main {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+@media (max-width: 700px) {
+
+    #topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .branding {
+        width: 100%;
+    }
+
+    .menu {
+        width: 100%;
+    }
+
+    .menu button {
+        width: 100%;
+    }
+
 }
