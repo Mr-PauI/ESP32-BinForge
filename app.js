@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     let ModuleInstance = null;
+    let wasmReady = false;
 
     const fileInput = document.getElementById("fileInput");
     const fileStatus = document.getElementById("fileStatus");
@@ -26,21 +27,25 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // ----------------------------------------------------
-    // WASM init (MODULARIZE=1 + build in wasm/build/)
+    // WASM init (MODULARIZE=1 + correct path handling)
     // ----------------------------------------------------
-    import("./wasm/build/binforge.js").then((createModule) => {
+    import("./wasm/build/binforge.js")
+        .then((createModule) => {
+            return createModule.default({
+                locateFile: (path) => "./wasm/build/" + path
+            });
+        })
+        .then((Module) => {
+            ModuleInstance = Module;
+            wasmReady = true;
+            console.log("WASM ready");
 
-        return createModule.default({
-            locateFile: (path) => {
-                // ensures binforge.wasm is found in same folder
-                return "./wasm/build/" + path;
-            }
+            statusText.textContent = "WASM ready";
+        })
+        .catch((err) => {
+            console.error("WASM failed to load:", err);
+            statusText.textContent = "WASM failed to load";
         });
-
-    }).then((Module) => {
-        ModuleInstance = Module;
-        console.log("WASM ready");
-    });
 
     // ----------------------------------------------------
     // File load + immediate analysis
@@ -66,10 +71,11 @@ document.addEventListener("DOMContentLoaded", () => {
             "Size: " + state.binarySize + " bytes\n\n";
 
         // ------------------------------------------------
-        // WASM analysis (guarded)
+        // WASM analysis (SAFE GUARD)
         // ------------------------------------------------
-        if (!ModuleInstance) {
-            analysisOutput.textContent += "WASM not ready yet...\n";
+        if (!wasmReady || !ModuleInstance) {
+            analysisOutput.textContent +=
+                "WASM not ready yet — try again in a second.\n";
             return;
         }
 
@@ -86,6 +92,9 @@ document.addEventListener("DOMContentLoaded", () => {
         ModuleInstance._free(ptr);
     });
 
+    // ----------------------------------------------------
+    // About modal
+    // ----------------------------------------------------
     function openAbout() {
         aboutModal.classList.add("open");
     }
