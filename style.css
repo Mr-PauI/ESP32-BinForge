@@ -157,6 +157,76 @@ hr {
     border-top: 1px solid #444;
 }
 
+.embedded-tools-box {
+    margin-top: 24px;
+    padding: 16px;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+}
+
+.embedded-tools-title {
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.embedded-tools-text {
+    opacity: 0.8;
+    font-size: 0.9em;
+    margin-bottom: 12px;
+}
+
+.embedded-tools-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.footer-minimal {
+    margin-top: 20px;
+    padding: 12px 0;
+    text-align: center;
+    font-size: 0.85em;
+    opacity: 0.7;
+}
+
+.footer-minimal a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.footer-minimal a:hover {
+    text-decoration: underline;
+}
+
+/* Web Tools */
+.tool-button {
+    display: inline-block;
+    padding: 8px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.9em;
+    border: 1px solid transparent;
+    transition: 0.15s ease;
+}
+
+.tool-button.primary {
+    background: #2d7dff;
+    color: white;
+}
+
+.tool-button.primary:hover {
+    background: #1f66d6;
+}
+
+.tool-button.secondary {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: inherit;
+}
+
+.tool-button.secondary:hover {
+    border-color: rgba(255,255,255,0.4);
+}
+
 /*=========================================================
     Responsive Layout
 =========================================================*/
